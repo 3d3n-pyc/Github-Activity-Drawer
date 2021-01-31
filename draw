@@ -41,7 +41,6 @@ def draw_pattern(year: int):
         for i in range(day + 1):
             if pattern[i][0] == ' ':
                 line += 1
-    print(line, col)
     while date.year == year:
         if pattern[line][col].isdigit():
             draw(date, int(pattern[line][col]))
