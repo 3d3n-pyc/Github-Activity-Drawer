@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+from subprocess import Popen
+from datetime import datetime, timedelta
+import sys
+
+
+def message(date: datetime) -> str:
+    return date.strftime('[+] %Y-%m-%d %H:%M')
+
+def run(commands: list[str]):
+    Popen(commands).wait()
+
+def draw(date: datetime, count: int):
+    for _ in range(count):
+        with open('README.md', 'a') as f:
+            f.write(f'- {message(date)}\n')
+        run(['git', 'add', '.'])
+        run(['git', 'commit', '-m', '"%s"' % message(date),
+             '--date', date.strftime('"%Y-%m-%d %H:%M:%S"')])
+
+def read_pattern() -> list[str]:
+    with open('pattern') as f:
+        return f.read().split('\n')
+
+def draw_pattern(year: int):
+    with open('pattern') as f:
+        pattern = f.read().split('\n')
+    date = datetime(year, 1, 1)
+# S | 29..................................................
+# M | 3...ooo....oooo....ooo....o...o...........oooo......
+# T | 4......o....o..o......o...oo..o..........o..........
+# W | 5....oo.....o..o....oo....o.o.o..........o..........
+# T | 6......o....o..o......o...o..oo..........o..........
+# F | 7...ooo....oooo....ooo....o...o....o......oooo......
+# S |18...................................................
+    # get pos of first day
+    day = date.weekday()
+    line, col = 0, 0
+    if day != 6:
+        for i in range(day + 1):
+            if pattern[i][0] == ' ':
+                line += 1
+    print(line, col)
+    while date.year == year:
+        if pattern[line][col].isdigit():
+            draw(date, int(pattern[line][col]))
+        date += timedelta(days=1)
+        if line == 6:
+            line = 0
+            col += 1
+        else:
+            line += 1
+draw_pattern(2021)

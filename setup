@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+from datetime import datetime, timedelta
+
+# setup pattern
+
+def setup(year: int) -> None:
+    PATTERN = ['' for _ in range(7)]
+    # get the first day of the year
+    date = datetime(year, 1, 1)
+    # get day of the week
+    day = date.weekday()
+    if day != 6:
+        for i in range(day + 1):
+            PATTERN[i] = ' '
+    while date.year == year:
+        date += timedelta(days=1)
+        PATTERN[date.weekday()] += '.'
+    with open(f'pattern', 'w') as f:
+        f.write('\n'.join(PATTERN))
+
+setup(2022)
